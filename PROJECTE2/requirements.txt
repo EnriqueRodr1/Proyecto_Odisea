@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-sqlalchemy
-pydantic
-fastapi[all]
-bcrypt
-mysql-connector-python

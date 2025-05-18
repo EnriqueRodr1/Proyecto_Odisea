@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva de Hotel – Odisea</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <a href="index.html"><img src="logo.svg" alt="Logo Odisea"></a>
+    </div>
+    <nav class="nav-links">
+      <a href="restaurantes.html">Restaurantes</a>
+      <a href="spa.html">Spa</a>
+      <a href="hoteles.html">Hoteles</a>
+      <a href="pistas.html">Pistas</a>
+      <a href="socio.html">Área Socio</a>
+    </nav>
+  </header>
+
+  <section class="reserva-section">
+    <h2>Reserva tu Hotel</h2>
+    <p>Completa el formulario para reservar tu habitación en el Hotel.</p>
+
+    <form id="reservaHotelForm">
+      <label for="fecha">Fecha de Entrada:</label>
+      <input type="date" id="fecha" required>
+
+      <label for="hora">Hora de Llegada:</label>
+      <input type="time" id="hora" required>
+
+      <label for="noches">Número de Noches:</label>
+      <input type="number" id="noches" min="1" required>
+
+      <label for="personas">Número de Personas:</label>
+      <select id="personas" required>
+        <option value="1">1 Persona</option>
+        <option value="2">2 Personas</option>
+        <option value="3">3 Personas</option>
+        <option value="4">4 Personas</option>
+      </select>
+
+      <button type="submit" class="reserva-btn">Confirmar Reserva</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 Odisea. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get("email");
+      const hotel_id = params.get("hotel_id");
+
+      if (!email || !hotel_id) {
+        alert("Faltan datos necesarios para completar la reserva.");
+        window.location.href = "hoteles.html";
+        return;
+      }
+
+      document.getElementById("reservaHotelForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const fecha = document.getElementById("fecha").value;
+        const hora = document.getElementById("hora").value;
+        const noches = parseInt(document.getElementById("noches").value);
+        const personas = document.getElementById("personas").value;
+
+        if (!fecha || !hora || !noches || !personas) {
+          alert("Por favor, completa todos los campos.");
+          return;
+        }
+
+        // Obtener socio_id
+        const socioRes = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
+        if (!socioRes.ok) {
+          alert("No se pudo obtener el socio.");
+          return;
+        }
+        const socio = await socioRes.json();
+
+        // Calcular fecha de salida
+        const entrada = new Date(fecha);
+        entrada.setDate(entrada.getDate() + noches);
+        const fechaSalida = entrada.toISOString().split("T")[0];
+
+        const habitacion_id = 1; // Puedes reemplazar esto si agregas selección de habitación
+
+        const reserva = {
+          socio_id: socio.id,
+          hotel_id: parseInt(hotel_id),
+          habitacion_id: habitacion_id,
+          fecha_entrada: fecha,
+          fecha_salida: fechaSalida
+        };
+
+        const resReserva = await fetch("http://18.210.82.24:8001/reservas_hotel/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reserva)
+        });
+
+        if (resReserva.ok) {
+          alert("Reserva guardada con éxito.");
+          window.location.href = `socio.html?email=${encodeURIComponent(email)}`;
+        } else {
+          alert("Error al guardar la reserva.");
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

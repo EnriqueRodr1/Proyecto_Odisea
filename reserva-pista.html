@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reserva de Pista – Odisea</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <a href="index.html"><img src="logo.svg" alt="Logo Odisea" class="logo" style="height: 60px;" /></a>
+    <nav class="nav-links">
+      <a href="restaurantes.html">Restaurantes</a>
+      <a href="spa.html">Spa</a>
+      <a href="hoteles.html">Hoteles</a>
+      <a href="pistas.html" class="activo">Pistas</a>
+      <a href="socio.html">Área Socio</a>
+    </nav>
+  </header>
+
+  <h2>Reserva tu Pista</h2>
+  <p>Completa el formulario para reservar tu pista.</p>
+
+  <form id="reservaPistaForm">
+    <label for="tipo-pista">Tipo de Pista:</label>
+    <input type="text" id="tipo-pista" name="tipo-pista" readonly />
+
+    <label for="nombre">Nombre del Responsable:</label>
+    <input type="text" id="nombre" name="nombre" required />
+
+    <label for="telefono">Teléfono de Contacto:</label>
+    <input type="tel" id="telefono" name="telefono" required />
+
+    <label for="personas">Número de Jugadores:</label>
+    <input type="number" id="personas" name="personas" min="1" max="20" required />
+
+    <label for="fecha">Fecha de Reserva:</label>
+    <input type="date" id="fecha" name="fecha" required />
+
+    <label for="hora">Hora de Reserva:</label>
+    <select id="hora" name="hora" required></select>
+
+    <label for="duracion">Duración (máx. 3 horas):</label>
+    <select id="duracion" name="duracion" required>
+      <option value="1">1 hora</option>
+      <option value="2">2 horas</option>
+      <option value="3">3 horas</option>
+    </select>
+
+    <button type="submit" class="reserva-btn">Confirmar Reserva</button>
+  </form>
+
+  <footer>
+    <p>© 2025 Odisea. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get("email");
+      const tipo = params.get("tipo");
+      const pistaId = params.get("pista_id");
+
+      if (!email || !tipo || !pistaId) {
+        alert("Faltan parámetros necesarios en la URL.");
+        return;
+      }
+
+      // Mostrar tipo de pista
+      const capitalizado = tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+      document.getElementById("tipo-pista").value = capitalizado;
+
+      // Horarios
+      const horariosDisponibles = {
+        "08:00": true, "09:00": true, "10:00": true, "11:00": true, "12:00": true,
+        "13:00": true, "14:00": true, "15:00": true, "16:00": true, "17:00": true
+      };
+      const selectHora = document.getElementById("hora");
+      Object.keys(horariosDisponibles).forEach(hora => {
+        const option = document.createElement("option");
+        option.value = hora;
+        option.textContent = hora;
+        selectHora.appendChild(option);
+      });
+
+      document.getElementById("reservaPistaForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const nombre = document.getElementById("nombre").value.trim();
+        const telefono = document.getElementById("telefono").value.trim();
+        const personas = document.getElementById("personas").value.trim();
+        const fecha = document.getElementById("fecha").value.trim();
+        const hora = document.getElementById("hora").value.trim();
+        const duracion = document.getElementById("duracion").value.trim();
+
+        if (!nombre || !telefono || !personas || !fecha || !hora || !duracion) {
+          alert("Por favor, completa todos los campos.");
+          return;
+        }
+
+        try {
+          // 1. Obtener socio
+          const resSocio = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
+          const socio = await resSocio.json();
+
+          // 2. Obtener pista
+          const resPistas = await fetch("http://18.210.82.24:8001/pistas");
+          const pistas = await resPistas.json();
+          const pista = pistas.find(p => p.id === parseInt(pistaId));
+
+          if (!pista) {
+            alert("No se encontró la pista.");
+            return;
+          }
+
+          // 3. Obtener servicio para esa pista
+          const resServicios = await fetch(`http://18.210.82.24:8001/pista/${pista.id}/servicios`);
+          const servicios = await resServicios.json();
+          const servicio = servicios[0];
+
+          if (!servicio) {
+            alert("No se encontró un servicio para esta pista.");
+            return;
+          }
+
+          // 4. Crear reserva
+          const reserva = {
+            socio_id: socio.id,
+            pista_id: pista.id,
+            servicio_pista_id: servicio.id,
+            fecha: fecha
+          };
+
+          const res = await fetch("http://18.210.82.24:8001/reservas_pista/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(reserva)
+          });
+
+          if (res.ok) {
+            alert("Reserva de pista registrada con éxito.");
+            window.location.href = `socio.html?email=${encodeURIComponent(email)}`;
+          } else {
+            alert("Error al guardar la reserva de pista.");
+          }
+
+        } catch (err) {
+          console.error("Error al procesar la reserva:", err);
+          alert("Error durante la reserva.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

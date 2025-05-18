@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área de Socio – Odisea</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="index.html"><img src="logo.svg" alt="Logo Odisea"></a>
+  </div>
+  <nav class="nav-links">
+    <a href="restaurantes.html">Restaurantes</a>
+    <a href="spa.html">Spa</a>
+    <a href="hoteles.html">Hoteles</a>
+    <a href="pistas.html">Pistas</a>
+    <a href="socio.html" class="activo">Área Socio</a>
+  </nav>
+</header>
+
+<div class="socio-container">
+  <aside class="socio-sidebar">
+    <img src="foto.jpg" alt="Foto de Perfil" class="perfil-img">
+    <p><strong id="nombre-socio">Fede</strong></p>
+    <p><strong>Email:</strong> <span id="email-socio">fede@gmail.com</span></p>
+    <p><strong>ID:</strong> <span id="id-socio"></span></p>
+    <p><strong>Teléfono:</strong> <span id="telefono-socio"></span></p>
+  </aside>
+
+  <main class="socio-contenido">
+
+    <!-- FAVORITOS -->
+    <section class="socio-favoritos">
+      <h2>Favoritos</h2>
+      <ul id="lista-favoritos">
+        <p>No hay elementos guardados aún.</p>
+      </ul>
+    </section>
+
+    <!-- RESERVAS -->
+    <section class="socio-reservas">
+      <h2>Reservas de Restaurante</h2>
+      <ul id="lista-reservas-restaurante"></ul>
+    </section>
+
+    <section class="socio-reservas">
+      <h2>Reservas de Spa</h2>
+      <ul id="lista-reservas-spa"></ul>
+    </section>
+
+    <section class="socio-reservas">
+      <h2>Reservas de Hotel</h2>
+      <ul id="lista-reservas-hotel"></ul>
+    </section>
+
+    <section class="socio-reservas">
+      <h2>Reservas de Pistas</h2>
+      <ul id="lista-reservas-pista"></ul>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>© 2025 Odisea. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get("email");
+  if (!email) {
+    alert("No se ha proporcionado un email.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("email-socio").textContent = email;
+
+  try {
+    const res = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
+    if (!res.ok) throw new Error("No se pudo obtener el socio.");
+    const socio = await res.json();
+    const socio_id = socio.id;
+
+    document.getElementById("nombre-socio").textContent = socio.nombre;
+    document.getElementById("email-socio").textContent = socio.email;
+    document.getElementById("id-socio").textContent = socio.id;
+    document.getElementById("telefono-socio").textContent = socio.telefono;
+
+    cargarFavoritos(socio_id);
+    cargarReservasRestaurante(socio_id);
+    cargarReservasSpa(socio_id);
+    cargarReservasHotel(socio_id);
+    cargarReservasPista(socio_id);
+
+  } catch (err) {
+    console.error("Error al cargar los datos del socio:", err);
+    alert("No se pudieron cargar los datos del socio.");
+  }
+});
+
+
+
+async function cargarFavoritos() {
+  const socio_id = document.getElementById("id-socio")?.textContent?.trim();
+  if (!socio_id) {
+    console.error("ID de socio no encontrado.");
+    return;
+  }
+
+  try {
+    const resFav = await fetch(`http://18.210.82.24:8001/favoritos/${socio_id}`);
+    const favoritos = await resFav.json();
+    const listaFav = document.getElementById("lista-favoritos");
+    listaFav.innerHTML = favoritos.length === 0 ? "<p>No hay elementos guardados aún.</p>" : "";
+
+    for (const f of favoritos) {
+      const li = document.createElement("li");
+
+      const tipo = f.tipo_establecimiento || f.tipo || "Desconocido";
+      const referencia_id = f.referencia_id;
+
+      // Mostrar el botón si hay socio_id y referencia_id válidos
+      li.innerHTML = `
+        ${tipo} ${referencia_id || ""}
+        <button onclick="eliminarFavorito(${socio_id}, ${referencia_id})" class="btn btn-danger btn-sm">Eliminar</button>
+      `;
+
+      listaFav.appendChild(li);
+    }
+  } catch (err) {
+    console.error("Error cargando favoritos:", err);
+    alert("No se pudieron cargar los favoritos.");
+  }
+}
+
+async function eliminarFavorito(socio_id, referencia_id) {
+  try {
+    const res = await fetch(`http://18.210.82.24:8001/favoritos/${socio_id}/${referencia_id}`, {
+      method: "DELETE"
+    });
+    if (!res.ok) throw new Error("No se pudo eliminar");
+
+    // Recargar lista
+    cargarFavoritos();
+  } catch (err) {
+    console.error("Error al eliminar favorito:", err);
+    alert("Error al eliminar favorito");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", cargarFavoritos);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --- RESERVAS ---
+async function cargarReservasRestaurante(socio_id) {
+  const res = await fetch(`http://18.210.82.24:8001/reservas_restaurante/${socio_id}`);
+  const reservas = await res.json();
+  const listaRest = document.getElementById("lista-reservas-restaurante");
+  listaRest.innerHTML = reservas.length === 0 ? "<p>No tienes reservas de restaurante pendientes.</p>" : "";
+  reservas.forEach(r => {
+    const li = document.createElement("li");
+    li.innerHTML = `Reserva Restaurante ID ${r.id} : ${r.fecha} ${r.hora}
+      <button onclick="eliminarReservaRestaurante(${r.id}, this)">Eliminar</button>`;
+    listaRest.appendChild(li);
+  });
+}
+
+async function eliminarReservaRestaurante(id, btn) {
+  try {
+    const res = await fetch(`http://18.210.82.24:8001/reservas_restaurante/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Error");
+    btn.closest("li").remove();
+  } catch {
+    alert("Error al eliminar reserva restaurante");
+  }
+}
+
+async function cargarReservasSpa(socio_id) {
+  const resSpa = await fetch(`http://18.210.82.24:8001/reservas_spa/${socio_id}`);
+  const reservasSpa = await resSpa.json();
+  const listaSpa = document.getElementById("lista-reservas-spa");
+  listaSpa.innerHTML = reservasSpa.length === 0 ? "<p>No tienes reservas de spa pendientes.</p>" : "";
+  reservasSpa.forEach(r => {
+    const li = document.createElement("li");
+    li.innerHTML = `Reserva Spa ID ${r.id} : ${r.fecha} ${r.hora}
+      <button onclick="eliminarReservaSpa(${r.id}, this)">Eliminar</button>`;
+    listaSpa.appendChild(li);
+  });
+}
+
+function eliminarReservaSpa(id, btn) {
+  fetch(`http://18.210.82.24:8001/reservas_spa/${id}`, { method: "DELETE" })
+    .then(() => btn.closest("li").remove())
+    .catch(() => alert("Error al eliminar reserva spa"));
+}
+
+async function cargarReservasHotel(socio_id) {
+  const resHotel = await fetch(`http://18.210.82.24:8001/reservas_hotel/${socio_id}`);
+  const reservasHotel = await resHotel.json();
+  const listaHotel = document.getElementById("lista-reservas-hotel");
+  listaHotel.innerHTML = reservasHotel.length === 0 ? "<p>No tienes reservas de hotel pendientes.</p>" : "";
+  reservasHotel.forEach(r => {
+    const li = document.createElement("li");
+    li.innerHTML = `Reserva Hotel ID ${r.id} - Hotel: ${r.hotel_nombre || "undefined"} - Entrada: ${r.fecha_entrada} - Salida: ${r.fecha_salida}
+      <button onclick="eliminarReservaHotel(${r.id}, this)">Eliminar</button>`;
+    listaHotel.appendChild(li);
+  });
+}
+
+function eliminarReservaHotel(id, btn) {
+  fetch(`http://18.210.82.24:8001/reservas_hotel/${id}`, { method: "DELETE" })
+    .then(() => btn.closest("li").remove())
+    .catch(() => alert("Error al eliminar reserva hotel"));
+}
+
+async function cargarReservasPista(socio_id) {
+  const resPistas = await fetch(`http://18.210.82.24:8001/reservas_pista/${socio_id}`);
+  const reservasPista = await resPistas.json();
+  const listaPista = document.getElementById("lista-reservas-pista");
+  listaPista.innerHTML = reservasPista.length === 0 ? "<p>No tienes reservas de pistas pendientes.</p>" : "";
+  reservasPista.forEach(r => {
+    const li = document.createElement("li");
+    li.innerHTML = `Reserva Pista ID ${r.id} - ${r.tipo_pista} - ${r.fecha} ${r.hora} (${r.duracion}h)
+      <button onclick="eliminarReservaPista(${r.id}, this)">Eliminar</button>`;
+    listaPista.appendChild(li);
+  });
+}
+
+function eliminarReservaPista(id, btn) {
+  fetch(`http://18.210.82.24:8001/reservas_pista/${id}`, { method: "DELETE" })
+    .then(() => btn.closest("li").remove())
+    .catch(() => alert("Error al eliminar reserva de pista"));
+}
+</script>
+
+</body>
+</html>

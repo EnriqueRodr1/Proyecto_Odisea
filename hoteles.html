@@ -1,0 +1,72 @@
+<!-- hoteles.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoteles - Odisea</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="index.html"><img src="logo.svg" alt="Logo"></a>
+    </div>
+    <nav class="nav-links">
+      <a href="restaurantes.html">Restaurantes</a>
+      <a href="spa.html">Spa</a>
+      <a href="hoteles.html" class="activo">Hoteles</a>
+      <a href="pistas.html">Pistas</a>
+      <a href="socio.html">Área Socio</a>
+    </nav>
+  </header>
+
+  <section class="hoteles-grid">
+    <div class="hotel-item" data-hotel-id="1">
+      <img src="hotel1.jpg" alt="Hotel Central">
+      <h3>Hotel Central</h3>
+      <p>Comodidad en el centro.</p>
+      <button class="guardar-btn">Guardar Favorito</button>
+      <button class="reserva-btn">Reservar</button>
+    </div>
+    <div class="hotel-item" data-hotel-id="2">
+      <img src="hotel2.jpg" alt="Hotel Playa">
+      <h3>Hotel Playa</h3>
+      <p>Frente al mar.</p>
+      <button class="guardar-btn">Guardar Favorito</button>
+      <button class="reserva-btn">Reservar</button>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get("email");
+      if (!email) return alert("No se ha proporcionado un email.");
+
+      document.querySelectorAll(".guardar-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const hotelId = btn.closest(".hotel-item").dataset.hotelId;
+          try {
+            await fetch("http://18.210.82.24:8001/favoritos/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, tipo: "hotel", referencia_id: hotelId })
+            });
+            alert("Favorito guardado");
+          } catch (err) {
+            alert("Error al guardar favorito");
+          }
+        });
+      });
+
+      document.querySelectorAll(".reserva-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const hotelId = btn.closest(".hotel-item").dataset.hotelId;
+          window.location.href = `reserva-hotel.html?email=${encodeURIComponent(email)}&hotel_id=${hotelId}`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

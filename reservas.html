@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         // Obtener ID del socio
-        const resSocio = await fetch(`http://18.210.82.24:8001/socios/email/${email}`);
+        const resSocio = await fetch(`http://18.210.82.24:8002/socios/email/${email}`);
         if (!resSocio.ok) throw new Error("No se pudo obtener el socio");
         const socio = await resSocio.json();
         socio_id = socio.id;
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         try {
-            const res = await fetch("http://18.210.82.24:8001/reservas_restaurante/", {
+            const res = await fetch("http://18.210.82.24:8002/reservas_restaurante/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datos)

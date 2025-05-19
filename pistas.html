@@ -1,66 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pistas Deportivas – Odisea</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pistas Deportivas - Odisea</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
 </head>
 <body>
 
-  <header>
-    <div class="logo">
-      <a href="index.html"><img src="logo.svg" alt="Logo Odisea"></a>
-    </div>
-    <nav class="nav-links">
-      <a href="restaurantes.html">Restaurantes</a>
-      <a href="spa.html">Spa</a>
-      <a href="hoteles.html">Hoteles</a>
-      <a href="pistas.html" class="activo">Pistas</a>
-      <a href="socio.html">Área Socio</a>
-    </nav>
-  </header>
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <a href="index.html"><img src="logo.svg" alt="Logo Odisea" /></a>
+  </div>
+  <nav class="nav-links">
+    <a href="#" onclick="redirigir('restaurantes.html')">Restaurantes</a>
+    <a href="#" onclick="redirigir('spa.html')">Spa</a>
+    <a href="#" onclick="redirigir('hoteles.html')">Hoteles</a>
+    <a href="#" onclick="redirigir('pistas.html')" class="active">Pistas</a>
+    <a href="#" onclick="redirigir('socio.html')">Área Socio</a>
+  </nav>
+</header>
 
-  <section class="pistas-banner">
-    <h1>Pistas Deportivas</h1>
-    <p>Reserva nuestras pistas y disfruta de la mejor experiencia deportiva.</p>
-  </section>
+<!-- BANNER -->
+<section class="pistas-banner">
+  <h1>Pistas Deportivas</h1>
+  <p>Reserva nuestras pistas y disfruta de la mejor experiencia deportiva.</p>
+</section>
 
-  <section class="pistas-lista">
-    <h2>Elige tu pista</h2>
-    <div class="pista-item" data-tipo="futbol">
-      <img src="futbol.jpg" alt="Pista de Fútbol">
-      <h3>Pista de Fútbol</h3>
-      <p>Césped sintético, medidas reglamentarias.</p>
-      <button class="guardar-btn">Guardar Favorito</button>
+<!-- PISTAS LISTA -->
+<section class="pistas-lista">
+  <div class="pista-item" data-tipo="futbol">
+    <img src="futbol.jpg" alt="Pista de Fútbol" />
+    <h3>Pista de Fútbol</h3>
+    <p>Césped sintético, medidas reglamentarias.</p>
+    <div class="btns">
+      <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
       <button class="reservar-btn" data-id="1">Reservar</button>
     </div>
+  </div>
 
-    <div class="pista-item" data-tipo="baloncesto">
-      <img src="baloncesto.jpg" alt="Pista de Baloncesto">
-      <h3>Pista de Baloncesto</h3>
-      <p>Cancha cubierta, equipamiento profesional.</p>
-      <button class="guardar-btn">Guardar Favorito</button>
+  <div class="pista-item" data-tipo="baloncesto">
+    <img src="baloncesto.jpg" alt="Pista de Baloncesto" />
+    <h3>Pista de Baloncesto</h3>
+    <p>Cancha cubierta, equipamiento profesional.</p>
+    <div class="btns">
+      <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
       <button class="reservar-btn" data-id="2">Reservar</button>
     </div>
+  </div>
 
-    <div class="pista-item" data-tipo="padel">
-      <img src="padel.jpg" alt="Pista de Pádel">
-      <h3>Pista de Pádel</h3>
-      <p>Pista moderna con paredes de cristal.</p>
-      <button class="guardar-btn">Guardar Favorito</button>
+  <div class="pista-item" data-tipo="padel">
+    <img src="padel.jpg" alt="Pista de Pádel" />
+    <h3>Pista de Pádel</h3>
+    <p>Pista moderna con paredes de cristal.</p>
+    <div class="btns">
+      <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
       <button class="reservar-btn" data-id="3">Reservar</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer>
-    <p>© 2025 Odisea. Todos los derechos reservados.</p>
-  </footer>
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2025 Odisea. Todos los derechos reservados.</p>
+</footer>
 
+<!-- SCRIPT -->
 <script>
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const email = params.get("email");
+  let socio_id = null;
 
   if (!email) {
     alert("No se ha proporcionado un email.");
@@ -68,78 +80,70 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  // Funcionalidad para "Guardar Favorito"
+  // Obtener socio_id
+  try {
+    const res = await fetch(`http://18.210.82.24:8002/socios/email/${encodeURIComponent(email)}`);
+    if (!res.ok) throw new Error("No se pudo cargar el socio.");
+    const socio = await res.json();
+    socio_id = socio.id;
+  } catch (err) {
+    console.error(err);
+    alert("Error al cargar el socio.");
+    return;
+  }
+
+  // Guardar favorito
   document.querySelectorAll(".guardar-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
-      const tipo = btn.closest(".pista-item").dataset.tipo;
+      const item = btn.closest(".pista-item");
+      const referencia_id = parseInt(btn.nextElementSibling.dataset.id);
+      const tipo = item.dataset.tipo;
 
       try {
-        // 1. Obtener socio
-        const resSocio = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
-        const socio = await resSocio.json();
-        const socio_id = socio.id;
-
-        // 2. Obtener pistas
-        const resPistas = await fetch("http://18.210.82.24:8001/pistas");
-        const pistas = await resPistas.json();
-        const pista = pistas.find(p => p.tipo.toLowerCase() === tipo.toLowerCase());
-
-        if (!pista) {
-          alert("No se encontró la pista.");
-          return;
-        }
-
-        // 3. Crear favorito
-        const favorito = {
-          socio_id,
-          tipo_establecimiento: tipo,
-          referencia_id: pista.id
-        };
-
-        const res = await fetch("http://18.210.82.24:8001/favoritos/", {
+        const res = await fetch("http://18.210.82.24:8002/favoritos/", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(favorito)
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            socio_id,
+            tipo_establecimiento: "pista",
+            referencia_id
+          })
         });
 
         if (res.ok) {
-          alert("Pista guardada como favorito.");
-          window.location.href = `socio.html?email=${encodeURIComponent(email)}`;
+          alert("Favorito guardado.");
         } else {
-          alert("Error al guardar favorito.");
+          alert("No se pudo guardar el favorito.");
         }
-
       } catch (err) {
         console.error("Error al guardar favorito:", err);
-        alert("Error al procesar la solicitud.");
+        alert("Error al guardar favorito.");
       }
     });
   });
 
-  // Funcionalidad para "Reservar"
-  document.querySelectorAll(".reservar-btn").forEach(button => {
-    button.addEventListener("click", () => {
-      const pistaId = button.getAttribute("data-id");
-      const tipo = button.closest(".pista-item").dataset.tipo;
-
-      if (!pistaId || !tipo || !email) {
-        alert("Faltan parámetros para la reserva.");
-        return;
-      }
-
-      // Redirige correctamente
-      window.location.href = `reserva-pista.html?pista_id=${pistaId}&tipo=${tipo}&email=${encodeURIComponent(email)}`;
+  // Redirigir a reserva
+  document.querySelectorAll(".reservar-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const pista_id = btn.getAttribute("data-id");
+      const tipo = btn.closest(".pista-item").dataset.tipo;
+      window.location.href = `reserva-pista.html?pista_id=${pista_id}&tipo=${tipo}&email=${encodeURIComponent(email)}`;
     });
   });
-
 });
+
+// Redirección desde header
+function redirigir(pagina) {
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get("email") || localStorage.getItem("socio_email");
+  if (!email) {
+    alert("Debes iniciar sesión.");
+    window.location.href = "login.html";
+  } else {
+    window.location.href = `${pagina}?email=${encodeURIComponent(email)}`;
+  }
+}
 </script>
-
-
-
-
 
 </body>
 </html>

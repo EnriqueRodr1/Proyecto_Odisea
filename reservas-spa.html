@@ -52,13 +52,13 @@
 
       try {
         // Obtener datos del socio
-        const resSocio = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
+        const resSocio = await fetch(`http://18.210.82.24:8002/socios/email/${encodeURIComponent(email)}`);
         if (!resSocio.ok) throw new Error("Socio no encontrado.");
         const socio = await resSocio.json();
         socio_id = socio.id;
 
         // Obtener datos del servicio spa
-        const resServicio = await fetch(`http://18.210.82.24:8001/servicio_spa/${servicio_id}`);
+        const resServicio = await fetch(`http://18.210.82.24:8002/servicio_spa/${servicio_id}`);
         if (!resServicio.ok) throw new Error("Servicio Spa no encontrado.");
         const servicio = await resServicio.json();
         spa_id = servicio.spa_id;
@@ -90,7 +90,7 @@
         };
 
         try {
-          const res = await fetch("http://18.210.82.24:8001/reservas_spa/", {
+          const res = await fetch("http://18.210.82.24:8002/reservas_spa/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)

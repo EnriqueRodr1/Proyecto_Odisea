@@ -1,143 +1,146 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurantes</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurantes</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <a href="index.html"><img src="logo.svg" alt="Logo Odisea"></a>
+  <header>
+    <div class="logo">
+      <a href="index.html"><img src="logo.svg" alt="Logo Odisea" /></a>
+    </div>
+    <nav class="nav-links">
+      <a href="#" onclick="redirigir('restaurantes.html')" class="activo">Restaurantes</a>
+      <a href="#" onclick="redirigir('spa.html')">Spa</a>
+      <a href="#" onclick="redirigir('hoteles.html')">Hoteles</a>
+      <a href="#" onclick="redirigir('pistas.html')">Pistas</a>
+      <a href="#" onclick="redirigir('socio.html')">Área Socio</a>
+    </nav>
+  </header>
+
+  <section class="restaurants">
+    <div class="restaurant" data-id="1">
+      <img src="restaurante1.jpg" alt="Metropolitan Abascal" class="restaurant-img" />
+      <div class="restaurant-content">
+        <h3>Metropolitan Abascal</h3>
+        <p class="direccion">C/José Abascal, 46, Madrid</p>
+        <div class="restaurant-buttons">
+          <button class="guardar-btn">❤️ Guardar Favorito</button>
+          <button class="reserva-btn">Hacer una Reserva</button>
         </div>
-        <nav class="nav-links">
-            <a href="restaurantes.html" class="activo">Restaurantes</a>
-            <a href="spa.html">Spa</a>
-            <a href="hoteles.html">Hoteles</a>
-            <a href="pistas.html">Pistas</a>
-            <a href="socio.html">Área Socio</a>
-        </nav>
-    </header>
-
-<section class="restaurants">
-  <div class="restaurant" data-id="1">
-    <img src="restaurante1.jpg" alt="Metropolitan Abascal" class="restaurant-img" />
-    
-    <div class="restaurant-content">
-      <h3>Metropolitan Abascal</h3>
-      <p class="direccion">C/José Abascal, 46, Madrid</p>
-      
-      <div class="restaurant-buttons">
-        <button class="guardar-btn">❤️ Guardar Favorito</button>
-        <button class="reserva-btn">Hacer una Reserva</button>
-      </div>
-
-      <div class="restaurant-info">
-        <p><strong>Disponibilidad:</strong> Alta</p>
-        <p><strong>Horario:</strong> 12:00 - 23:00</p>
-        <p><strong>Valoración:</strong> ⭐⭐⭐⭐☆ (230 reseñas)</p>
-        <p><strong>Especialidad:</strong> Cocina mediterránea contemporánea</p>
+        <div class="restaurant-info">
+          <p><strong>Disponibilidad:</strong> Alta</p>
+          <p><strong>Horario:</strong> 12:00 - 23:00</p>
+          <p><strong>Valoración:</strong> ⭐⭐⭐⭐☆ (230 reseñas)</p>
+          <p><strong>Especialidad:</strong> Cocina mediterránea contemporánea</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="restaurant" data-id="2">
-    <img src="restaurante2.jpg" alt="Metropolitan Iradier" class="restaurant-img" />
-    
-    <div class="restaurant-content">
-      <h3>Metropolitan Iradier</h3>
-      <p class="direccion">Escoles Pies, 105, Barcelona</p>
-
-      <div class="restaurant-buttons">
-        <button class="guardar-btn">❤️ Guardar Favorito</button>
-        <button class="reserva-btn">Hacer una Reserva</button>
-      </div>
-
-      <div class="restaurant-info">
-        <p><strong>Disponibilidad:</strong> Media</p>
-        <p><strong>Horario:</strong> 13:00 - 22:00</p>
-        <p><strong>Valoración:</strong> ⭐⭐⭐⭐⭐ (310 reseñas)</p>
-        <p><strong>Especialidad:</strong> Cocina de autor y tapas gourmet</p>
+    <div class="restaurant" data-id="2">
+      <img src="restaurante2.jpg" alt="Metropolitan Iradier" class="restaurant-img" />
+      <div class="restaurant-content">
+        <h3>Metropolitan Iradier</h3>
+        <p class="direccion">Escoles Pies, 105, Barcelona</p>
+        <div class="restaurant-buttons">
+          <button class="guardar-btn">❤️ Guardar Favorito</button>
+          <button class="reserva-btn">Hacer una Reserva</button>
+        </div>
+        <div class="restaurant-info">
+          <p><strong>Disponibilidad:</strong> Media</p>
+          <p><strong>Horario:</strong> 13:00 - 22:00</p>
+          <p><strong>Valoración:</strong> ⭐⭐⭐⭐⭐ (310 reseñas)</p>
+          <p><strong>Especialidad:</strong> Cocina de autor y tapas gourmet</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const email = params.get("email");
     let socio_id = null;
 
     if (!email) {
-        alert("No se ha proporcionado un email.");
-        window.location.href = "index.html";
-        return;
+      alert("No se ha proporcionado un email.");
+      window.location.href = "index.html";
+      return;
     }
 
     // Obtener socio_id
-    fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`)
-        .then(res => {
-            if (!res.ok) throw new Error("No se pudo obtener el socio.");
-            return res.json();
-        })
-        .then(data => {
-            socio_id = data.id;
-        })
-        .catch(err => {
-            console.error("Error:", err);
-            alert("Error al obtener datos del socio.");
-        });
+    fetch(`http://18.210.82.24:8002/socios/email/${encodeURIComponent(email)}`)
+      .then(res => {
+        if (!res.ok) throw new Error("No se pudo obtener el socio.");
+        return res.json();
+      })
+      .then(data => {
+        socio_id = data.id;
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("Error al obtener datos del socio.");
+      });
 
     // Guardar favoritos
     document.querySelectorAll(".guardar-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-            const restauranteElement = btn.closest(".restaurant");
-            const referencia_id = parseInt(restauranteElement.dataset.id);
-            const tipo = "restaurante";
+      btn.addEventListener("click", async () => {
+        const restauranteElement = btn.closest(".restaurant");
+        const referencia_id = parseInt(restauranteElement.dataset.id);
+        const tipo = "restaurante";
 
-            if (!referencia_id || !socio_id) {
-                alert("Restaurante o usuario no reconocido.");
-                return;
-            }
+        if (!referencia_id || !socio_id) {
+          alert("Restaurante o usuario no reconocido.");
+          return;
+        }
 
-            try {
-                const res = await fetch("http://18.210.82.24:8001/favoritos/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        socio_id,
-                        tipo,
-                        referencia_id
-                    })
-                });
+        try {
+          const res = await fetch("http://18.210.82.24:8002/favoritos/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              socio_id,
+              tipo,
+              referencia_id
+            })
+          });
 
-                if (res.ok) {
-                    alert("Favorito guardado.");
-                } else {
-                    alert("No se pudo guardar el favorito.");
-                }
-            } catch (err) {
-                console.error("Error al guardar favorito:", err);
-                alert("Error al guardar favorito.");
-            }
-        });
+          if (res.ok) {
+            alert("Favorito guardado.");
+          } else {
+            alert("No se pudo guardar el favorito.");
+          }
+        } catch (err) {
+          console.error("Error al guardar favorito:", err);
+          alert("Error al guardar favorito.");
+        }
+      });
     });
 
-    // Ir a reservas.html
+    // Redirigir a reservas.html
     document.querySelectorAll(".reserva-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const restauranteElement = btn.closest(".restaurant");
-            const restaurante_id = restauranteElement.dataset.id;
-            window.location.href = `reservas.html?email=${encodeURIComponent(email)}&restaurante_id=${restaurante_id}`;
-        });
+      btn.addEventListener("click", () => {
+        const restauranteElement = btn.closest(".restaurant");
+        const restaurante_id = restauranteElement.dataset.id;
+        window.location.href = `reservas.html?email=${encodeURIComponent(email)}&restaurante_id=${restaurante_id}`;
+      });
     });
-});
-</script>
+  });
 
+  // Redirigir con email al navegar desde el header
+  function redirigir(pagina) {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    if (!email) {
+      alert("Email no encontrado. Por favor, inicia sesión.");
+      window.location.href = "login.html";
+    } else {
+      window.location.href = `${pagina}?email=${encodeURIComponent(email)}`;
+    }
+  }
+  </script>
 
 </body>
 </html>

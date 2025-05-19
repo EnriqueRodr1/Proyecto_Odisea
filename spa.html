@@ -1,114 +1,226 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spa Odisea</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4ff;
+      color: #333;
+    }
+
+    header {
+      background: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .logo a {
+      font-size: 22px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #222;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #444;
+      font-weight: 500;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      height: calc(100vh - 70px);
+    }
+
+    .spa-item {
+      flex: 1 1 50%;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      padding: 30px;
+      color: white;
+      height: 100%;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .spa-item h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .spa-item p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .guardar-btn {
+      background-color: #f04c4c;
+      color: white;
+    }
+
+    .reserva-btn {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    @media (max-width: 768px) {
+      .spa-item {
+        flex: 1 1 100%;
+        height: 50vh;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <a href="index.html"><img src="logo.svg" alt="Logo Odisea"></a>
+    <a href="index.html">Spa Odisea</a>
   </div>
-  <nav class="nav-links">
-    <a href="restaurantes.html">Restaurantes</a>
-    <a href="spa.html" class="activo">Spa</a>
-    <a href="hoteles.html">Hoteles</a>
-    <a href="pistas.html">Pistas</a>
-    <a href="socio.html">Área Socio</a>
+  <nav>
+    <a href="#" onclick="redirigir('restaurantes.html')">Restaurantes</a>
+    <a href="#" onclick="redirigir('spa.html')">Spa</a>
+    <a href="#" onclick="redirigir('hoteles.html')">Hoteles</a>
+    <a href="#" onclick="redirigir('pistas.html')">Pistas</a>
+    <a href="#" onclick="redirigir('socio.html')">Área Socio</a>
   </nav>
 </header>
 
-<section class="spa-banner">
-  <h1>Bienvenido al Spa & Wellness de Odisea</h1>
-  <p>Un oasis de relajación y bienestar diseñado para desconectar del estrés diario.</p>
-</section>
-
-<section class="spa-info">
-  <div class="spa-item" data-id="1" data-servicio="Jacuzzi">
-    <h3>Jacuzzi & Baños</h3>
-    <p>Sumérgete en un jacuzzi con agua termal para revitalizar cuerpo y mente.</p>
-    <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
-    <button class="reserva-btn">Reservar</button>
+<div class="container">
+  <div class="spa-item" id="jacuzzi" data-id="1" data-servicio="Jacuzzi" style="background-image: url('spa.jpg');">
+    <div class="overlay">
+      <h2>Jacuzzi & Baños</h2>
+      <p>Sumérgete en un jacuzzi con agua termal para revitalizar cuerpo y mente.</p>
+      <div class="btn-group">
+        <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
+        <button class="reserva-btn">Reservar</button>
+      </div>
+    </div>
   </div>
 
-  <div class="spa-item" data-id="2" data-servicio="Masajes">
-    <h3>Salón de Masajes</h3>
-    <p>Disfruta de masajes terapéuticos con nuestros expertos en relajación.</p>
-    <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
-    <button class="reserva-btn">Reservar</button>
+  <div class="spa-item" id="masajes" data-id="2" data-servicio="Masajes" style="background-image: url('masajes.jpg');">
+    <div class="overlay">
+      <h2>Salón de Masajes</h2>
+      <p>Disfruta de masajes terapéuticos con nuestros expertos en relajación.</p>
+      <div class="btn-group">
+        <button class="guardar-btn"><i class="fa fa-heart"></i> Guardar Favorito</button>
+        <button class="reserva-btn">Reservar</button>
+      </div>
+    </div>
   </div>
-</section>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const email = params.get("email");
+  document.addEventListener("DOMContentLoaded", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    let socio_id = null;
 
-  if (!email) {
-    alert("No se ha proporcionado un email.");
-    window.location.href = "index.html";
-    return;
-  }
+    if (!email) {
+      alert("Debe proporcionar un email.");
+      window.location.href = "index.html";
+      return;
+    }
 
-  // Obtener socio_id usando el email
-  let socio_id = null;
-  try {
-    const res = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
-    if (!res.ok) throw new Error("Socio no encontrado");
-    const socio = await res.json();
-    socio_id = socio.id;
-  } catch (err) {
-    alert("No se pudo cargar el socio.");
-    return;
-  }
+    // Guardar en localStorage para navegación
+    localStorage.setItem("socio_email", email);
 
-  // Guardar favorito
-  document.querySelectorAll(".guardar-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const spaItem = btn.closest(".spa-item");
-      const referencia_id = parseInt(spaItem.dataset.id); // Asegurarse que sea un número válido
-      const tipo_establecimiento = "spa";
+    try {
+      const res = await fetch(`http://18.210.82.24:8002/socios/email/${encodeURIComponent(email)}`);
+      if (!res.ok) throw new Error("Socio no encontrado");
+      const data = await res.json();
+      socio_id = data.id;
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo cargar el socio.");
+      return;
+    }
 
-      if (!referencia_id) {
-        alert("Referencia inválida");
-        return;
-      }
+    // Guardar favorito
+    document.querySelectorAll(".guardar-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const item = btn.closest(".spa-item");
+        const referencia_id = parseInt(item.dataset.id);
+        const tipo_establecimiento = "spa";
 
-      try {
-        const res = await fetch("http://18.210.82.24:8001/favoritos/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            socio_id,
-            tipo_establecimiento,
-            referencia_id
-          })
-        });
-
-        if (res.ok) {
-          alert("Favorito guardado.");
-        } else {
-          alert("Error: no se pudo guardar el favorito.");
+        if (!referencia_id) {
+          alert("Referencia inválida");
+          return;
         }
-      } catch (err) {
-        console.error("Error al guardar favorito:", err);
-        alert("Error al guardar favorito.");
-      }
+
+        try {
+          const res = await fetch("http://18.210.82.24:8002/favoritos/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ socio_id, tipo_establecimiento, referencia_id })
+          });
+
+          if (res.ok) {
+            alert("Favorito guardado.");
+          } else {
+            alert("Error: no se pudo guardar el favorito.");
+          }
+        } catch (err) {
+          console.error("Error al guardar favorito:", err);
+          alert("Error al guardar el favorito.");
+        }
+      });
+    });
+
+    // Redirigir a reserva
+    document.querySelectorAll(".reserva-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const item = btn.closest(".spa-item");
+        const servicio_id = item.dataset.id;
+        window.location.href = `reservas-spa.html?email=${encodeURIComponent(email)}&servicio_id=${servicio_id}`;
+      });
     });
   });
 
-  // Redirección a reserva
-  document.querySelectorAll(".reserva-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const servicio_id = btn.closest(".spa-item").dataset.id;
-      window.location.href = `reservas-spa.html?email=${encodeURIComponent(email)}&servicio_id=${servicio_id}`;
-    });
-  });
-});
+  function redirigir(pagina) {
+    const email = localStorage.getItem("socio_email");
+    if (!email) {
+      alert("Por favor, inicia sesión para acceder.");
+      window.location.href = "login.html";
+    } else {
+      window.location.href = `${pagina}?email=${encodeURIComponent(email)}`;
+    }
+  }
 </script>
 
 </body>

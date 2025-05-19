@@ -77,7 +77,7 @@
         }
 
         // Obtener socio_id
-        const socioRes = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
+        const socioRes = await fetch(`http://18.210.82.24:8002/socios/email/${encodeURIComponent(email)}`);
         if (!socioRes.ok) {
           alert("No se pudo obtener el socio.");
           return;
@@ -99,7 +99,7 @@
           fecha_salida: fechaSalida
         };
 
-        const resReserva = await fetch("http://18.210.82.24:8001/reservas_hotel/", {
+        const resReserva = await fetch("http://18.210.82.24:8002/reservas_hotel/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(reserva)

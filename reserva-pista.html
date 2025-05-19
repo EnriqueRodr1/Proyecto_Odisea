@@ -101,11 +101,11 @@
 
         try {
           // 1. Obtener socio
-          const resSocio = await fetch(`http://18.210.82.24:8001/socios/email/${encodeURIComponent(email)}`);
+          const resSocio = await fetch(`http://18.210.82.24:8002/socios/email/${encodeURIComponent(email)}`);
           const socio = await resSocio.json();
 
           // 2. Obtener pista
-          const resPistas = await fetch("http://18.210.82.24:8001/pistas");
+          const resPistas = await fetch("http://18.210.82.24:8002/pistas");
           const pistas = await resPistas.json();
           const pista = pistas.find(p => p.id === parseInt(pistaId));
 
@@ -115,7 +115,7 @@
           }
 
           // 3. Obtener servicio para esa pista
-          const resServicios = await fetch(`http://18.210.82.24:8001/pista/${pista.id}/servicios`);
+          const resServicios = await fetch(`http://18.210.82.24:8002/pista/${pista.id}/servicios`);
           const servicios = await resServicios.json();
           const servicio = servicios[0];
 
@@ -132,7 +132,7 @@
             fecha: fecha
           };
 
-          const res = await fetch("http://18.210.82.24:8001/reservas_pista/", {
+          const res = await fetch("http://18.210.82.24:8002/reservas_pista/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

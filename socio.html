@@ -124,9 +124,13 @@ async function cargarFavoritos() {
       const tipo = f.tipo_establecimiento || f.tipo || "Desconocido";
       const referencia_id = f.referencia_id;
 
-      // Mostrar el botón si hay socio_id y referencia_id válidos
+      if (!referencia_id) {
+        console.warn("Referencia ID inválida:", f);
+        continue; // Salta este favorito
+      }
+
       li.innerHTML = `
-        ${tipo} ${referencia_id || ""}
+        ${tipo} ${referencia_id}
         <button onclick="eliminarFavorito(${socio_id}, ${referencia_id})" class="btn btn-danger btn-sm">Eliminar</button>
       `;
 
